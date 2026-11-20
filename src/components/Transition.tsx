@@ -84,32 +84,49 @@ export function TransitionProvider({ header, children }: { header: React.ReactNo
       return;
     }
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(main, { opacity: 0, y: 24 }, {
-        opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.05, clearProps: "transform",
-        onComplete: () => { busy.current = false; ScrollTrigger.refresh(); },
-      });
-      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
-        gsap.from(el, {
-          opacity: 0, y: 32, duration: 1.1, ease: "power3.out",
-          delay: Number(el.dataset.reveal || 0),
-          scrollTrigger: { trigger: el, start: "top 92%", once: true },
+    let ctx: gsap.Context | undefined;
+    // wipe = first view after the load screen: content rises into place from
+    // behind a bottom edge. Otherwise a soft fade, used between pages.
+    const enter = (wipe: boolean) => {
+      ctx = gsap.context(() => {
+        gsap.fromTo(main, { opacity: wipe ? 1 : 0, y: wipe ? 0 : 24 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.05, clearProps: "transform",
+          onComplete: () => { busy.current = false; ScrollTrigger.refresh(); },
         });
-      });
-      gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
-        gsap.to(el, {
-          yPercent: Number(el.dataset.parallax || -8), ease: "none",
-          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+        gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
+          const delay = Number(el.dataset.reveal || 0);
+          const scrollTrigger = { trigger: el, start: "top 92%", once: true };
+          if (wipe) {
+            gsap.fromTo(el, { clipPath: "inset(100% 0% 0% 0%)", y: 70 }, {
+              clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.3, ease: "power4.out",
+              delay: 0.25 + delay * 1.4, clearProps: "clipPath,transform", scrollTrigger,
+            });
+          } else {
+            gsap.from(el, { opacity: 0, y: 32, duration: 1.1, ease: "power3.out", delay, scrollTrigger });
+          }
         });
-      });
-    }, main);
+        gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+          gsap.to(el, {
+            yPercent: Number(el.dataset.parallax || -8), ease: "none",
+            scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+          });
+        });
+      }, main);
+    };
+
+    // On a fresh page load, wait for the load screen to start lifting.
+    const root = document.documentElement;
+    const waiting = root.dataset.js === "1" && root.dataset.loaded !== "1";
+    const onLoaded = () => enter(true);
+    if (waiting) window.addEventListener("loader:done", onLoaded, { once: true });
+    else enter(false);
 
     const raf = requestAnimationFrame(() => {
       ScrollTrigger.refresh();
       if (hash) scrollToTarget(hash, true);
     });
 
-    return () => { cancelAnimationFrame(raf); ctx.revert(); };
+    return () => { window.removeEventListener("loader:done", onLoaded); cancelAnimationFrame(raf); ctx?.revert(); };
   }, [pathname, scrollToTarget]);
 
   return (

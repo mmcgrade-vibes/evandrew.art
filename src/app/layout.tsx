@@ -5,6 +5,8 @@ import { site } from "@/content/site";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { TransitionProvider } from "@/components/Transition";
 import { Header } from "@/components/Header";
+import { Loader } from "@/components/Loader";
+import { work } from "@/content/work";
 
 export const metadata: Metadata = {
   title: { default: site.title, template: `%s | ${site.name}` },
@@ -24,6 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <SmoothScroll>
+          <Loader items={work.map((p) => ({ slug: p.slug, width: p.width, height: p.height }))} />
           <TransitionProvider header={<Header />}>{children}</TransitionProvider>
         </SmoothScroll>
       </body>

@@ -25,6 +25,7 @@ Open http://localhost:3000.
 | Endless grid view (`/work`) | `src/components/InfiniteGrid.tsx` |
 | Piece detail pages (`/work/<slug>`) | `src/components/PieceDetail.tsx` |
 | Strip and grid toggle icons (Lottie JSON, play on hover) | `src/icons/*.json`, `src/components/LottieIcon.tsx` |
+| Load screen (cycling pieces and percentage) | `src/components/Loader.tsx` |
 | Header and menu overlay | `src/components/Header.tsx` |
 
 ## How the motion works

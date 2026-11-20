@@ -1,0 +1,15 @@
+.loader { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; background: var(--color-umber-deep); color: var(--color-paper); clip-path: inset(0% 0% 0% 0%); will-change: clip-path; }
+/* Only shown once the page knows JavaScript is running (see layout.tsx). */
+:global(html[data-js]) .loader { display: grid; }
+.row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: clamp(40px, 11.5vw, 166px); }
+.name { justify-self: end; white-space: nowrap; }
+.frame { position: relative; width: clamp(120px, 11.6vw, 167px); aspect-ratio: 167 / 223; overflow: hidden; background: color-mix(in srgb, var(--color-paper) 10%, transparent); }
+.frame > div { position: absolute; inset: 0; visibility: hidden; }
+.frame > div[data-on="true"] { visibility: visible; }
+.frame img { object-fit: cover; }
+.count { justify-self: start; min-width: 4ch; font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) {
+  .row { grid-template-columns: 1fr; justify-items: center; gap: 24px; }
+  .name, .count { justify-self: center; }
+  .count { text-align: center; }
+}
