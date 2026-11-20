@@ -1,0 +1,42 @@
+.root { display: grid; grid-template-columns: minmax(0, 1fr) 45vw; padding-left: 38px; background: var(--color-paper-light); }
+
+.stack { padding: 14.5svh 0 0; display: flex; flex-direction: column; gap: 28px; align-items: flex-start; }
+.figure { margin: 0; width: min(52vw, calc(81.75svh * var(--ar))); transition: opacity 0.6s var(--ease-out); }
+.figure[data-active="false"] { opacity: 0.35; }
+.frame { position: relative; aspect-ratio: var(--ar); width: 100%; overflow: hidden; background: var(--color-paper); }
+.frame img { object-fit: cover; }
+.inlineCaption { display: none; }
+.end { padding: 12svh 0 30svh; }
+
+.panel { position: sticky; top: 0; height: 100svh; align-self: start; }
+.text { position: absolute; left: 11vw; top: 50%; transform: translateY(-50%); width: min(324px, 28vw); display: flex; flex-direction: column; gap: 6px; animation: swap 0.6s var(--ease-out) both; }
+.description { text-wrap: pretty; }
+.facts { margin: 22px 0 0; display: grid; gap: 3px; }
+.facts div { display: grid; grid-template-columns: 74px 1fr; }
+.facts dt { color: var(--color-muted); }
+.facts dd { margin: 0; }
+.back { position: absolute; left: 11vw; top: 14.5svh; }
+
+.thumbs { position: absolute; left: 0; right: 25px; bottom: 30px; display: flex; align-items: flex-end; --h: clamp(18px, 1.8vw, 30px); }
+.thumb { position: relative; flex: none; height: var(--h); width: calc(var(--h) * var(--ar)); overflow: hidden; opacity: 0.5; transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out); }
+.thumb img { object-fit: cover; }
+.thumb:hover, .thumb[data-active="true"] { opacity: 1; }
+.thumb[data-active="true"] { transform: translateY(-4px); }
+.gap { flex: 0 0 5px; transition: flex-grow 0.8s var(--ease-out); }
+.gap[data-open="true"] { flex-grow: 1; }
+
+@keyframes swap { from { opacity: 0; transform: translateY(calc(-50% + 8px)); } to { opacity: 1; transform: translateY(-50%); } }
+
+@media (max-width: 900px) {
+  .root { grid-template-columns: 1fr; padding: 0 var(--margin); }
+  .stack { padding-top: 100px; gap: 56px; }
+  .figure { width: 100%; max-width: 560px; }
+  .figure[data-active="false"] { opacity: 1; }
+  .inlineCaption { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+  .panel { display: none; }
+  .end { padding: 0 0 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .text { animation: none; }
+  .gap, .figure, .thumb { transition: none; }
+}

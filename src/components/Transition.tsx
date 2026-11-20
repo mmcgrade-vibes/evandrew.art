@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "./SmoothScroll";
 
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
-const themeFor = (pathname: string) => (pathname === "/" ? "light" : "dark");
+const themeFor = (pathname: string) => (pathname === "/" ? "light" : pathname.startsWith("/work") ? "gallery" : "dark");
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 type Nav = { navigate: (href: string) => void };

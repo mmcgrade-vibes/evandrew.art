@@ -7,6 +7,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { Piece } from "@/content/work";
 import { useLenis } from "./SmoothScroll";
+import { TLink, useTransitionNav } from "./Transition";
+import { ViewToggle } from "./ViewToggle";
 import styles from "./Gallery.module.css";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -17,7 +19,8 @@ const ease = gsap.parseEase("power2.inOut");
 /**
  * Pinned gallery. Vertical scroll drives a horizontal strip: every piece is a
  * narrow, blurred slice until it reaches the centre, where it opens to its
- * full width. Scrolling settles on the nearest piece.
+ * full width. Scrolling settles on the nearest piece. Clicking the open piece
+ * goes to its detail page.
  */
 export function Gallery({ items }: { items: Piece[] }) {
   const root = useRef<HTMLElement>(null);
@@ -26,6 +29,7 @@ export function Gallery({ items }: { items: Piece[] }) {
   const bar = useRef<HTMLSpanElement>(null);
   const trigger = useRef<ScrollTrigger | null>(null);
   const lenis = useLenis();
+  const { navigate } = useTransitionNav();
   const lenisRef = useRef(lenis);
   useEffect(() => { lenisRef.current = lenis; }, [lenis]);
   const [active, setActive] = useState(0);
@@ -110,7 +114,7 @@ export function Gallery({ items }: { items: Piece[] }) {
         <div ref={stage} className={styles.stage}>
           <div ref={track} className={styles.track}>
             {items.map((p, i) => (
-              <button key={p.slug} type="button" data-piece className={styles.piece} onClick={() => scrollToIndex(i)} aria-label={`${p.title}, ${p.year}`} aria-current={i === active}>
+              <button key={p.slug} type="button" data-piece className={styles.piece} onClick={() => (i === active ? navigate(`/work/${p.slug}`) : scrollToIndex(i))} aria-label={i === active ? `${p.title}, ${p.year}. View details` : `${p.title}, ${p.year}`} aria-current={i === active}>
                 <Image src={`/work/${p.slug}.jpg`} alt="" fill sizes="(max-width: 700px) 90vw, 62vw" loading={i < 3 ? "eager" : "lazy"} draggable={false} />
               </button>
             ))}
@@ -120,9 +124,10 @@ export function Gallery({ items }: { items: Piece[] }) {
         <div className={styles.info}>
           <div key={piece.slug} className={styles.caption} aria-live="polite">
             <p className="t-label">{piece.title}</p>
-            <p className={`t-mono-meta ${styles.meta}`}>{piece.year} | {piece.medium}</p>
+            <p className={`t-mono-meta ${styles.meta}`}>{piece.year}, {piece.medium}</p>
+            <TLink href={`/work/${piece.slug}`} className={`t-mono-label link ${styles.details}`}>View details</TLink>
           </div>
-          <p key={`${piece.slug}-d`} className={`t-mono-meta ${styles.description}`}>{piece.description}</p>
+          <ViewToggle view="strip" />
           <div className={`t-label ${styles.counter}`}>
             <span className={styles.current}>{pad(active + 1)}</span>
             <span className={styles.rule}><span ref={bar} /></span>

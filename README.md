@@ -22,11 +22,15 @@ Open http://localhost:3000.
 | Smooth scroll (Lenis driven by the GSAP ticker) | `src/components/SmoothScroll.tsx` |
 | Page transitions and scroll reveals | `src/components/Transition.tsx` |
 | Pinned home page gallery | `src/components/Gallery.tsx` |
+| Endless grid view (`/work`) | `src/components/InfiniteGrid.tsx` |
+| Piece detail pages (`/work/<slug>`) | `src/components/PieceDetail.tsx` |
 | Header and menu overlay | `src/components/Header.tsx` |
 
 ## How the motion works
 
 - **Gallery:** the section is taller than the screen and its contents are sticky. Vertical scroll progress maps to a piece index. Each piece is a narrow blurred slice until it nears the centre, where it opens to full width. When scrolling stops, it settles on the nearest piece. Clicking a slice scrolls to it.
+- **Grid view:** one block of tiles is repeated to cover the screen and shifted by the pan position, so it never ends in any direction. Pan with the wheel, trackpad, drag, touch or arrow keys. A click opens the piece.
+- **Detail pages:** pieces stack down the left and scroll while the text on the right stays put and follows the piece in view. The thumbnail row is a map of the page: pieces already passed gather on the left.
 - **Page transitions:** use `TLink` in place of `next/link`. The current page fades and lifts out, the route and colour theme change, then the new page settles in. The header sits outside `<main>` and never moves.
 - **Reveals:** add `data-reveal="0.2"` (delay in seconds) to fade an element up when it enters the screen, or `data-parallax="-8"` to drift it while scrolling.
 - **Reduced motion:** visitors who ask for reduced motion get native scrolling and no animation.

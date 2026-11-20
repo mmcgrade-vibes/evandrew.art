@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#e2e3de" };
 
 // Sets the page theme before first paint so dark pages don't flash light.
-const themeScript = `(function(d){d.dataset.theme=location.pathname==="/"?"light":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.dataset.js="1"})(document.documentElement)`;
+const themeScript = `(function(d){var p=location.pathname;d.dataset.theme=p==="/"?"light":p.indexOf("/work")===0?"gallery":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.dataset.js="1"})(document.documentElement)`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
