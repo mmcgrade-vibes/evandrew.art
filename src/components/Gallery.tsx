@@ -7,19 +7,32 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { Piece } from "@/content/work";
 import { useLenis } from "./SmoothScroll";
-import { TLink, useTransitionNav } from "./Transition";
+import { useTransitionNav } from "./Transition";
 import { ViewToggle } from "./ViewToggle";
 import styles from "./Gallery.module.css";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const pad = (n: number) => String(n).padStart(2, "0");
-const ease = gsap.parseEase("power2.inOut");
+
+// Share of each piece's scroll distance where it simply stays open. The move
+// to the next piece happens in what is left.
+const HOLD = 0.55;
+// How quickly the strip catches up with the scroll position (0 to 1 per frame).
+const FOLLOW = 0.11;
+
+/** Turns even scroll progress into "rest on a piece, glide, rest on the next". */
+const dwell = (p: number) => {
+  const i = Math.floor(p);
+  const t = gsap.utils.clamp(0, 1, (p - i - HOLD / 2) / (1 - HOLD));
+  return i + t * t * t * (t * (t * 6 - 15) + 10);
+};
 
 /**
  * Pinned gallery. Vertical scroll drives a horizontal strip: every piece is a
  * narrow, blurred slice until it reaches the centre, where it opens to its
- * full width. Scrolling settles on the nearest piece. Clicking the open piece
+ * full width. Each piece holds for a stretch of scrolling before the next
+ * one takes over, and scrolling settles on the nearest piece. Clicking the open piece
  * goes to its detail page.
  */
 export function Gallery({ items }: { items: Piece[] }) {
@@ -39,7 +52,7 @@ export function Gallery({ items }: { items: Piece[] }) {
     const st = trigger.current;
     if (!st) return;
     const y = st.start + (i / (n - 1)) * (st.end - st.start);
-    if (lenisRef.current) lenisRef.current.scrollTo(y, { duration: 1, easing: (t) => 1 - Math.pow(1 - t, 3) });
+    if (lenisRef.current) lenisRef.current.scrollTo(y, { duration: 1.2, easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) });
     else window.scrollTo({ top: y, behavior: "smooth" });
   };
 
@@ -50,6 +63,7 @@ export function Gallery({ items }: { items: Piece[] }) {
     let full: number[] = [];
     let current = -1;
     let idle: number | undefined;
+    let goal = 0, shown = 0;
 
     const measure = () => {
       viewport = window.innerWidth;
@@ -64,7 +78,7 @@ export function Gallery({ items }: { items: Piece[] }) {
     const render = (p: number) => {
       let x = 0, focus = 0, weight = 0;
       for (let i = 0; i < els.length; i++) {
-        const e = ease(Math.max(0, 1 - Math.abs(i - p)));
+        const e = Math.max(0, 1 - Math.abs(i - p));
         const w = slice + (full[i] - slice) * e;
         const style = els[i].style;
         style.width = `${w}px`;
@@ -81,27 +95,37 @@ export function Gallery({ items }: { items: Piece[] }) {
       if (nearest !== current) { current = nearest; setActive(nearest); }
     };
 
+    // The strip chases the scroll position instead of being locked to it, so
+    // wheel steps and the settle below never show up as jumps.
+    const follow = () => {
+      const d = goal - shown;
+      if (Math.abs(d) < 0.0004) { if (d !== 0) { shown = goal; render(shown); } return; }
+      shown += d * (reduce ? 1 : FOLLOW);
+      render(shown);
+    };
+    gsap.ticker.add(follow);
+
     const st = ScrollTrigger.create({
       trigger: root.current,
       start: "top top",
       end: "bottom bottom",
-      onRefresh: (self) => { measure(); render(self.progress * (n - 1)); },
+      onRefresh: (self) => { measure(); goal = shown = dwell(self.progress * (n - 1)); render(shown); },
       onUpdate: (self) => {
-        render(self.progress * (n - 1));
-        // Settle on the nearest piece once scrolling stops.
+        goal = dwell(self.progress * (n - 1));
+        // If scrolling stops part way between two pieces, finish the move.
         window.clearTimeout(idle);
         idle = window.setTimeout(() => {
           if (!self.isActive) return;
-          const p = self.progress * (n - 1);
-          if (Math.abs(p - Math.round(p)) > 0.004) scrollToIndex(Math.round(p));
-        }, 140);
+          if (Math.abs(goal - Math.round(goal)) > 0.002) scrollToIndex(Math.round(self.progress * (n - 1)));
+        }, 220);
       },
     });
     trigger.current = st;
     measure();
-    render(st.progress * (n - 1));
+    goal = shown = dwell(st.progress * (n - 1));
+    render(shown);
 
-    return () => { window.clearTimeout(idle); trigger.current = null; };
+    return () => { gsap.ticker.remove(follow); window.clearTimeout(idle); trigger.current = null; };
   }, { scope: root, dependencies: [items] });
 
   const piece = items[active];
@@ -125,7 +149,6 @@ export function Gallery({ items }: { items: Piece[] }) {
           <div key={piece.slug} className={styles.caption} aria-live="polite">
             <p className="t-label">{piece.title}</p>
             <p className={`t-mono-meta ${styles.meta}`}>{piece.year}, {piece.medium}</p>
-            <TLink href={`/work/${piece.slug}`} className={`t-mono-label link ${styles.details}`}>View details</TLink>
           </div>
           <ViewToggle view="strip" />
           <div className={`t-label ${styles.counter}`}>
