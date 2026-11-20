@@ -24,6 +24,7 @@ Open http://localhost:3000.
 | Pinned home page gallery | `src/components/Gallery.tsx` |
 | Endless grid view (`/work`) | `src/components/InfiniteGrid.tsx` |
 | Piece detail pages (`/work/<slug>`) | `src/components/PieceDetail.tsx` |
+| Strip and grid toggle icons (Lottie JSON, play on hover) | `src/icons/*.json`, `src/components/LottieIcon.tsx` |
 | Header and menu overlay | `src/components/Header.tsx` |
 
 ## How the motion works

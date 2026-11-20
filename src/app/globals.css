@@ -103,10 +103,10 @@ img { display: block; max-width: 100%; }
 html[data-js] main { opacity: 0; }
 
 /* Strip / Grid switch shared by the home gallery and the grid page. */
-.view-toggle { display: inline-flex; align-items: center; gap: 12px; }
-.view-toggle a { opacity: 0.45; transition: opacity 0.3s var(--ease-out); padding: 6px 0; }
-.view-toggle a:hover, .view-toggle a[aria-current="true"] { opacity: 1; }
-.view-toggle i { width: 1px; height: 11px; background: currentColor; opacity: 0.5; }
+.view-toggle { display: inline-flex; align-items: center; gap: 10px; }
+.view-toggle a { display: block; padding: 6px; margin: -6px 0; opacity: 0.4; transition: opacity 0.3s var(--ease-out); }
+.view-toggle a:hover, .view-toggle a:focus-visible, .view-toggle a[aria-current="true"] { opacity: 1; }
+.view-toggle svg { display: block; overflow: visible; }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
