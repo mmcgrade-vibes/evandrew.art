@@ -4,6 +4,14 @@
   padding: 36px var(--margin) 0;
   pointer-events: none;
 }
+/* Soft blur behind the wordmark and menu so content passing underneath stays
+   out of their way. It fades out at the bottom edge instead of ending in a line. */
+.header::before {
+  content: ""; position: absolute; inset: 0 0 -34px 0; z-index: -1; pointer-events: none;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent);
+  mask-image: linear-gradient(to bottom, #000 50%, transparent);
+}
 .header > * { pointer-events: auto; }
 .wordmark {
   font-family: var(--font-family-sans); font-size: var(--font-size-wordmark); line-height: 1.34;
