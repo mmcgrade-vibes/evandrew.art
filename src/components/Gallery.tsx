@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { Piece } from "@/content/work";
 import { useLenis } from "./SmoothScroll";
-import { useTransitionNav } from "./Transition";
+import { TLink, useTransitionNav } from "./Transition";
 import { ViewToggle } from "./ViewToggle";
 import styles from "./Gallery.module.css";
 
@@ -125,6 +125,7 @@ export function Gallery({ items }: { items: Piece[] }) {
           <div key={piece.slug} className={styles.caption} aria-live="polite">
             <p className="t-label">{piece.title}</p>
             <p className={`t-mono-meta ${styles.meta}`}>{piece.year}, {piece.medium}</p>
+            <TLink href={`/work/${piece.slug}`} className={`t-mono-label link ${styles.details}`}>View details</TLink>
           </div>
           <ViewToggle view="strip" />
           <div className={`t-label ${styles.counter}`}>
