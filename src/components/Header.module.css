@@ -5,13 +5,14 @@
   pointer-events: none;
 }
 /* Soft blur behind the wordmark and menu so content passing underneath stays
-   out of their way. It fades in at the top and out at the bottom, so it never
-   ends in a line, including under a phone's status bar. */
+   out of their way. It starts well above the top of the screen, so it reaches
+   the very top edge (and under a phone's status bar where the browser allows
+   it), and only fades out along its bottom edge. */
 .header::before {
-  content: ""; position: absolute; inset: 0 0 -34px 0; z-index: -1; pointer-events: none;
+  content: ""; position: absolute; inset: -200px 0 -44px 0; z-index: -1; pointer-events: none;
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 32%, #000 56%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 32%, #000 56%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent);
 }
 .header > * { pointer-events: auto; }
 .wordmark {

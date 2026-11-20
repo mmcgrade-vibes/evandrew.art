@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import { site } from "@/content/site";
@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: { default: site.title, template: `%s | ${site.name}` },
   description: site.description,
 };
+
+// Lets the page draw into the area around a phone's notch and status bar.
+export const viewport: Viewport = { viewportFit: "cover" };
 
 // Sets the page theme before first paint so dark pages don't flash light.
 const themeScript = `(function(d){var p=location.pathname;d.dataset.theme=p==="/"?"light":p.indexOf("/work")===0?"gallery":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.dataset.js="1"})(document.documentElement)`;
