@@ -1,0 +1,14 @@
+.page { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 652fr) minmax(0, 424px); gap: clamp(40px, 10.9vw, 157px); align-items: center; padding: 140px 8.5vw 60px 5.83vw; }
+.figure { position: relative; aspect-ratio: 652 / 588; width: 100%; max-height: 73.5svh; overflow: hidden; background: color-mix(in srgb, var(--ink) 12%, transparent); display: grid; place-items: center; }
+.figure img { object-fit: cover; }
+.placeholder { opacity: 0.7; }
+.copy { display: flex; flex-direction: column; gap: 12px; max-width: 318px; }
+.copy p + p { margin-top: 14px; }
+.wide { max-width: 424px; }
+.hours { margin-top: 14px; }
+.form { margin-top: 56px; }
+.single { grid-template-columns: minmax(0, 424px); justify-content: start; padding-left: 62vw; padding-right: var(--margin); }
+@media (max-width: 900px) {
+  .page, .single { grid-template-columns: 1fr; justify-content: stretch; padding: 110px var(--margin) 60px; gap: 36px; align-items: start; }
+  .copy, .wide { max-width: 520px; }
+}

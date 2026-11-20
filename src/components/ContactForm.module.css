@@ -1,0 +1,5 @@
+.form { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+.field { display: grid; grid-template-columns: 84px 1fr; align-items: baseline; width: 100%; border-bottom: 1px solid color-mix(in srgb, var(--ink) 45%, transparent); padding-bottom: 8px; transition: border-color 0.3s; }
+.field:focus-within { border-color: var(--ink); }
+.field input, .field textarea { font: inherit; color: inherit; background: none; border: 0; outline: 0; width: 100%; resize: none; padding: 0; }
+.form :global(.button) { margin-top: 10px; }

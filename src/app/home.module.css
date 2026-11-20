@@ -1,0 +1,12 @@
+.hero { position: relative; min-height: 100svh; display: grid; grid-template-columns: 1fr minmax(0, 440px) 1fr; align-items: center; padding: 120px var(--margin) 60px; }
+/* The picture sits on the page centre line, as in the design. */
+.figure { grid-column: 2; position: relative; aspect-ratio: 440 / 588; max-height: 73.5svh; width: 100%; justify-self: center; overflow: hidden; background: var(--color-paper-light); }
+.figure img { object-fit: cover; scale: 1.1; }
+.copy { grid-column: 3; justify-self: start; width: min(318px, 100%); margin-left: clamp(32px, 6.4vw, 92px); display: flex; flex-direction: column; gap: 12px; }
+.cta { margin-top: 27px; }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 110px; align-items: start; }
+  .figure, .copy { grid-column: 1; }
+  .figure { max-width: 440px; justify-self: start; }
+  .copy { margin-left: 0; width: auto; max-width: 520px; }
+}
